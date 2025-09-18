@@ -23,6 +23,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<String> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ArtistAlreadyDisabledException.class)
     public ResponseEntity<String> handleArtistAlreadyDisabledException(ArtistAlreadyDisabledException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -30,6 +35,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ArtistAlreadyEnabledException.class)
     public ResponseEntity<String> handleArtistAlreadyEnabledException(ArtistAlreadyEnabledException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomerAlreadyDisabledException.class)
+    public ResponseEntity<String> handleCustomerAlreadyDisabledException(CustomerAlreadyDisabledException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomerAlreadyEnabledException.class)
+    public ResponseEntity<String> handleCustomerAlreadyEnabledException(CustomerAlreadyEnabledException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
