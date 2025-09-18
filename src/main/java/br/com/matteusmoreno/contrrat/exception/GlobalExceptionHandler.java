@@ -47,4 +47,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleCustomerAlreadyEnabledException(CustomerAlreadyEnabledException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(AvailabilityNotFoundException.class)
+    public ResponseEntity<String> handleAvailabilityNotFoundException(AvailabilityNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidTimeRangeException.class)
+    public ResponseEntity<String> handleInvalidTimeRangeException(InvalidTimeRangeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RedundantStatusChangeException.class)
+    public ResponseEntity<String> handleRedundantStatusChangeException(RedundantStatusChangeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
