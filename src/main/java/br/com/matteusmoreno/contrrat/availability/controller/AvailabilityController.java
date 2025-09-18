@@ -1,11 +1,11 @@
-package br.com.matteusmoreno.contrrat.address.availability.controller;
+package br.com.matteusmoreno.contrrat.availability.controller;
 
-import br.com.matteusmoreno.contrrat.address.availability.service.AvailabilityService;
-import br.com.matteusmoreno.contrrat.address.availability.constant.AvailabilityStatus;
-import br.com.matteusmoreno.contrrat.address.availability.domain.Availability;
-import br.com.matteusmoreno.contrrat.address.availability.request.CreateAvailabilityRequest;
-import br.com.matteusmoreno.contrrat.address.availability.request.UpdateAvailabilityRequest;
-import br.com.matteusmoreno.contrrat.address.availability.response.AvailabilityDetailsResponse;
+import br.com.matteusmoreno.contrrat.availability.service.AvailabilityService;
+import br.com.matteusmoreno.contrrat.availability.constant.AvailabilityStatus;
+import br.com.matteusmoreno.contrrat.availability.domain.Availability;
+import br.com.matteusmoreno.contrrat.availability.request.CreateAvailabilityRequest;
+import br.com.matteusmoreno.contrrat.availability.request.UpdateAvailabilityRequest;
+import br.com.matteusmoreno.contrrat.availability.response.AvailabilityDetailsResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

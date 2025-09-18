@@ -1,11 +1,11 @@
-package br.com.matteusmoreno.contrrat.address.availability.service;
+package br.com.matteusmoreno.contrrat.availability.service;
 
-import br.com.matteusmoreno.contrrat.address.availability.constant.AvailabilityStatus;
-import br.com.matteusmoreno.contrrat.address.availability.domain.Availability;
-import br.com.matteusmoreno.contrrat.address.availability.repository.AvailabilityRepository;
-import br.com.matteusmoreno.contrrat.address.availability.request.CreateAvailabilityRequest;
-import br.com.matteusmoreno.contrrat.address.availability.request.UpdateAvailabilityRequest;
-import br.com.matteusmoreno.contrrat.address.availability.response.AvailabilityDetailsResponse;
+import br.com.matteusmoreno.contrrat.availability.constant.AvailabilityStatus;
+import br.com.matteusmoreno.contrrat.availability.domain.Availability;
+import br.com.matteusmoreno.contrrat.availability.repository.AvailabilityRepository;
+import br.com.matteusmoreno.contrrat.availability.request.CreateAvailabilityRequest;
+import br.com.matteusmoreno.contrrat.availability.request.UpdateAvailabilityRequest;
+import br.com.matteusmoreno.contrrat.availability.response.AvailabilityDetailsResponse;
 import br.com.matteusmoreno.contrrat.exception.InvalidTimeRangeException;
 import br.com.matteusmoreno.contrrat.exception.RedundantStatusChangeException;
 import org.springframework.data.domain.Page;
@@ -36,6 +36,7 @@ public class AvailabilityService {
                 .startTime(request.startTime())
                 .endTime(request.endTime())
                 .availabilityStatus(request.availabilityStatus())
+                .price(request.price())
                 .build();
 
         return availabilityRepository.save(availability);
@@ -58,6 +59,7 @@ public class AvailabilityService {
 
         availability.setStartTime(request.startTime());
         availability.setEndTime(request.endTime());
+        if (request.price() != null) availability.setPrice(request.price());
 
         return availabilityRepository.save(availability);
     }

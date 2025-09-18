@@ -1,4 +1,4 @@
-package br.com.matteusmoreno.contrrat.address.availability.constant;
+package br.com.matteusmoreno.contrrat.availability.constant;
 
 public enum AvailabilityStatus {
     AVAILABLE,

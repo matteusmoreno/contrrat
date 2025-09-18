@@ -1,8 +1,9 @@
-package br.com.matteusmoreno.contrrat.address.availability.response;
+package br.com.matteusmoreno.contrrat.availability.response;
 
-import br.com.matteusmoreno.contrrat.address.availability.constant.AvailabilityStatus;
-import br.com.matteusmoreno.contrrat.address.availability.domain.Availability;
+import br.com.matteusmoreno.contrrat.availability.constant.AvailabilityStatus;
+import br.com.matteusmoreno.contrrat.availability.domain.Availability;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record AvailabilityDetailsResponse(
@@ -10,7 +11,8 @@ public record AvailabilityDetailsResponse(
         String artistId,
         LocalDateTime startTime,
         LocalDateTime endTime,
-        AvailabilityStatus availabilityStatus
+        AvailabilityStatus availabilityStatus,
+        BigDecimal price
 ) {
     public AvailabilityDetailsResponse(Availability availability) {
         this(
@@ -18,7 +20,8 @@ public record AvailabilityDetailsResponse(
                 availability.getArtistId(),
                 availability.getStartTime(),
                 availability.getEndTime(),
-                availability.getAvailabilityStatus()
+                availability.getAvailabilityStatus(),
+                availability.getPrice()
         );
     }
 }

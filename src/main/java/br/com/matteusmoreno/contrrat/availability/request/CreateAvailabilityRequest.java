@@ -1,9 +1,11 @@
-package br.com.matteusmoreno.contrrat.address.availability.request;
+package br.com.matteusmoreno.contrrat.availability.request;
 
-import br.com.matteusmoreno.contrrat.address.availability.constant.AvailabilityStatus;
+import br.com.matteusmoreno.contrrat.availability.constant.AvailabilityStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CreateAvailabilityRequest(
@@ -14,5 +16,7 @@ public record CreateAvailabilityRequest(
         @NotNull(message = "End time is required")
         LocalDateTime endTime,
         @NotNull(message = "Availability status is required")
-        AvailabilityStatus availabilityStatus
-) { }
+        AvailabilityStatus availabilityStatus,
+        @NotNull(message = "Price is required")
+        @Positive(message = "Price must be positive")
+        BigDecimal price) {}
