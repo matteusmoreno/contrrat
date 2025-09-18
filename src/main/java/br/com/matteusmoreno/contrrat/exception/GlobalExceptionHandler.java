@@ -62,4 +62,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleRedundantStatusChangeException(RedundantStatusChangeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ContractNotFoundException.class)
+    public ResponseEntity<String> handleContractNotFoundException(ContractNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SlotsNotAvailableException.class)
+    public ResponseEntity<String> handleSlotsNotAvailableException(SlotsNotAvailableException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MismatchedArtistsException.class)
+    public ResponseEntity<String> handleMismatchedArtistsException(MismatchedArtistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidContractStatusException.class)
+    public ResponseEntity<String> handleInvalidContractStatusException(InvalidContractStatusException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }
