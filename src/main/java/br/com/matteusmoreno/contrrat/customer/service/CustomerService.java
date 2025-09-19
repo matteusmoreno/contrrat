@@ -7,8 +7,10 @@ import br.com.matteusmoreno.contrrat.customer.repository.CustomerRepository;
 import br.com.matteusmoreno.contrrat.customer.request.CreateCustomerRequest;
 import br.com.matteusmoreno.contrrat.customer.request.UpdateCustomerRequest;
 import br.com.matteusmoreno.contrrat.exception.*;
+import br.com.matteusmoreno.contrrat.security.AuthenticationService;
 import br.com.matteusmoreno.contrrat.user.constant.Profile;
 import br.com.matteusmoreno.contrrat.user.service.UserService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +23,14 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AddressService addressService;
     private final UserService userService;
+    private final AuthenticationService authenticationService; // Adicionado
 
-    public CustomerService(CustomerRepository customerRepository, AddressService addressService, UserService userService) {
+
+    public CustomerService(CustomerRepository customerRepository, AddressService addressService, UserService userService, AuthenticationService authenticationService) {
         this.customerRepository = customerRepository;
         this.addressService = addressService;
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
     @Transactional
@@ -60,7 +65,10 @@ public class CustomerService {
 
     @Transactional
     public Customer updateCustomer(UpdateCustomerRequest request) {
-        Customer customer = customerRepository.findById(request.id()).orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + request.id()));
+        String authenticatedCustomerId = authenticationService.getAuthenticatedCustomerId();
+        if (!request.id().equals(authenticatedCustomerId)) throw new AccessDeniedException("You can only update your own customer profile.");
+
+        Customer customer = getCustomerById(request.id());
 
         if (!customer.getEmail().equals(request.email()) && customerRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException("Email already registered");
@@ -87,6 +95,9 @@ public class CustomerService {
 
     @Transactional
     public void disableCustomer(String id) {
+        String authenticatedCustomerId = authenticationService.getAuthenticatedCustomerId();
+        if (!id.equals(authenticatedCustomerId)) throw new AccessDeniedException("You can only disable your own customer profile.");
+
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
 
         if (!customer.getActive()) throw new CustomerAlreadyDisabledException("Customer is already disabled");
@@ -99,6 +110,9 @@ public class CustomerService {
 
     @Transactional
     public void enableCustomer(String id) {
+        String authenticatedCustomerId = authenticationService.getAuthenticatedCustomerId();
+        if (!id.equals(authenticatedCustomerId)) throw new AccessDeniedException("You can only enable your own customer profile.");
+
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
 
         if (customer.getActive()) throw new CustomerAlreadyEnabledException("Customer is already enabled");

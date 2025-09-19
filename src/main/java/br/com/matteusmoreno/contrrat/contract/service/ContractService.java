@@ -3,17 +3,16 @@ package br.com.matteusmoreno.contrrat.contract.service;
 import br.com.matteusmoreno.contrrat.availability.constant.AvailabilityStatus;
 import br.com.matteusmoreno.contrrat.availability.domain.Availability;
 import br.com.matteusmoreno.contrrat.availability.service.AvailabilityService;
+import br.com.matteusmoreno.contrrat.contract.constant.ContractStatus;
 import br.com.matteusmoreno.contrrat.contract.domain.Contract;
 import br.com.matteusmoreno.contrrat.contract.repository.ContractRepository;
-import br.com.matteusmoreno.contrrat.contract.constant.ContractStatus;
 import br.com.matteusmoreno.contrrat.contract.request.CreateContractRequest;
 import br.com.matteusmoreno.contrrat.exception.ContractNotFoundException;
 import br.com.matteusmoreno.contrrat.exception.InvalidContractStatusException;
 import br.com.matteusmoreno.contrrat.exception.MismatchedArtistsException;
 import br.com.matteusmoreno.contrrat.exception.SlotsNotAvailableException;
 import br.com.matteusmoreno.contrrat.security.AuthenticationService;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +72,7 @@ public class ContractService {
         String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
         Contract contract = contractRepository.findById(contractId).orElseThrow(() -> new ContractNotFoundException("Contract not found"));
 
-        if (!contract.getArtistId().equals(authenticatedArtistId)) throw new SecurityException("User is not authorized to confirm this contract.");
+        if (!contract.getArtistId().equals(authenticatedArtistId)) throw new AccessDeniedException("User is not authorized to confirm this contract.");
         if (contract.getContractStatus() != ContractStatus.PENDING_CONFIRMATION) throw new InvalidContractStatusException("Contract cannot be confirmed as it is not pending confirmation.");
 
         contract.setContractStatus(ContractStatus.CONFIRMED);
@@ -91,7 +90,7 @@ public class ContractService {
         String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
         Contract contract = contractRepository.findById(contractId).orElseThrow(() -> new ContractNotFoundException("Contract not found"));
 
-        if (!contract.getArtistId().equals(authenticatedArtistId)) throw new SecurityException("User is not authorized to reject this contract.");
+        if (!contract.getArtistId().equals(authenticatedArtistId)) throw new AccessDeniedException("User is not authorized to reject this contract.");
         if (contract.getContractStatus() != ContractStatus.PENDING_CONFIRMATION) throw new InvalidContractStatusException("Contract cannot be rejected as it is not pending confirmation.");
 
         contract.setContractStatus(ContractStatus.REJECTED);
