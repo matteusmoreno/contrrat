@@ -1,5 +1,6 @@
-package br.com.matteusmoreno.contrrat.user;
+package br.com.matteusmoreno.contrrat.user.repository;
 
+import br.com.matteusmoreno.contrrat.user.domain.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

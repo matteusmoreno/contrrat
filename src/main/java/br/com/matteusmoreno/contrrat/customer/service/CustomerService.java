@@ -7,8 +7,8 @@ import br.com.matteusmoreno.contrrat.customer.repository.CustomerRepository;
 import br.com.matteusmoreno.contrrat.customer.request.CreateCustomerRequest;
 import br.com.matteusmoreno.contrrat.customer.request.UpdateCustomerRequest;
 import br.com.matteusmoreno.contrrat.exception.*;
-import br.com.matteusmoreno.contrrat.user.Profile;
-import br.com.matteusmoreno.contrrat.user.UserService;
+import br.com.matteusmoreno.contrrat.user.constant.Profile;
+import br.com.matteusmoreno.contrrat.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

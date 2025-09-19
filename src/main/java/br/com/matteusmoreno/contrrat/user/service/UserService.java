@@ -1,5 +1,8 @@
-package br.com.matteusmoreno.contrrat.user;
+package br.com.matteusmoreno.contrrat.user.service;
 
+import br.com.matteusmoreno.contrrat.user.domain.User;
+import br.com.matteusmoreno.contrrat.user.constant.Profile;
+import br.com.matteusmoreno.contrrat.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

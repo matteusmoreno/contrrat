@@ -1,6 +1,6 @@
 package br.com.matteusmoreno.contrrat.security;
 
-import br.com.matteusmoreno.contrrat.user.User;
+import br.com.matteusmoreno.contrrat.user.domain.User;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;

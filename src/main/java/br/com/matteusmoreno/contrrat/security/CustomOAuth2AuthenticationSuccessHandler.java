@@ -1,7 +1,7 @@
 package br.com.matteusmoreno.contrrat.security;
 
-import br.com.matteusmoreno.contrrat.user.User;
-import br.com.matteusmoreno.contrrat.user.UserService;
+import br.com.matteusmoreno.contrrat.user.domain.User;
+import br.com.matteusmoreno.contrrat.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

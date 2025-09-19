@@ -1,6 +1,7 @@
-package br.com.matteusmoreno.contrrat.user;
+package br.com.matteusmoreno.contrrat.user.domain;
 
 import br.com.matteusmoreno.contrrat.login.request.LoginRequest;
+import br.com.matteusmoreno.contrrat.user.constant.Profile;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

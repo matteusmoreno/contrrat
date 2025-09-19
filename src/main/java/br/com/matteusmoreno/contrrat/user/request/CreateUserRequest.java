@@ -1,5 +1,6 @@
-package br.com.matteusmoreno.contrrat.user;
+package br.com.matteusmoreno.contrrat.user.request;
 
+import br.com.matteusmoreno.contrrat.user.constant.Profile;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

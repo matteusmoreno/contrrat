@@ -8,8 +8,10 @@ import br.com.matteusmoreno.contrrat.availability.request.UpdateAvailabilityRequ
 import br.com.matteusmoreno.contrrat.availability.response.AvailabilityDetailsResponse;
 import br.com.matteusmoreno.contrrat.exception.InvalidTimeRangeException;
 import br.com.matteusmoreno.contrrat.exception.RedundantStatusChangeException;
+import br.com.matteusmoreno.contrrat.security.AuthenticationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +22,19 @@ import java.util.UUID;
 public class AvailabilityService {
 
     private final AvailabilityRepository availabilityRepository;
+    private final AuthenticationService authenticationService;
 
-    public AvailabilityService(AvailabilityRepository availabilityRepository) {
+
+    public AvailabilityService(AvailabilityRepository availabilityRepository, AuthenticationService authenticationService) {
         this.availabilityRepository = availabilityRepository;
+        this.authenticationService = authenticationService;
     }
 
     @Transactional
     public Availability createAvailability(CreateAvailabilityRequest request) {
+        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
+        if (!request.artistId().equals(authenticatedArtistId)) throw new AccessDeniedException("You can only create availability for your own artist profile.");
+
         if (request.endTime().isBefore(request.startTime())) throw new InvalidTimeRangeException("End time cannot be before start time");
         if (request.startTime().isBefore(LocalDateTime.now()) || request.endTime().isBefore(LocalDateTime.now())) throw new InvalidTimeRangeException("Availability times must be in the future");
 
@@ -52,10 +60,14 @@ public class AvailabilityService {
 
     @Transactional
     public Availability updateAvailability(UpdateAvailabilityRequest request) {
+        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
+
         if (request.endTime().isBefore(request.startTime())) throw new InvalidTimeRangeException("End time cannot be before start time");
         if (request.startTime().isBefore(LocalDateTime.now()) || request.endTime().isBefore(LocalDateTime.now())) throw new InvalidTimeRangeException("Availability times must be in the future");
 
         Availability availability = getAvailabilityById(request.id());
+
+        if (!availability.getArtistId().equals(authenticatedArtistId)) throw new AccessDeniedException("User is not authorized to update this availability.");
 
         availability.setStartTime(request.startTime());
         availability.setEndTime(request.endTime());
@@ -67,6 +79,9 @@ public class AvailabilityService {
     @Transactional
     public void changeAvailabilityStatus(String id, AvailabilityStatus status) {
         Availability availability = getAvailabilityById(id);
+
+        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
+        if (!availability.getArtistId().equals(authenticatedArtistId)) throw new AccessDeniedException("User is not authorized to update this availability.");
 
         if (availability.getAvailabilityStatus() == status) throw new RedundantStatusChangeException("Availability is already " + status);
 

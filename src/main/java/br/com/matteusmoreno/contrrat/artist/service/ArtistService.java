@@ -7,8 +7,10 @@ import br.com.matteusmoreno.contrrat.artist.repository.ArtistRepository;
 import br.com.matteusmoreno.contrrat.artist.request.CreateArtistRequest;
 import br.com.matteusmoreno.contrrat.artist.request.UpdateArtistRequest;
 import br.com.matteusmoreno.contrrat.exception.*;
-import br.com.matteusmoreno.contrrat.user.Profile;
-import br.com.matteusmoreno.contrrat.user.UserService;
+import br.com.matteusmoreno.contrrat.security.AuthenticationService;
+import br.com.matteusmoreno.contrrat.user.constant.Profile;
+import br.com.matteusmoreno.contrrat.user.service.UserService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +23,13 @@ public class ArtistService {
     private final ArtistRepository artistRepository;
     private final AddressService addressService;
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
-    public ArtistService(ArtistRepository artistRepository, AddressService addressService, UserService userService) {
+    public ArtistService(ArtistRepository artistRepository, AddressService addressService, UserService userService, AuthenticationService authenticationService) {
         this.artistRepository = artistRepository;
         this.addressService = addressService;
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
     @Transactional
@@ -61,7 +65,10 @@ public class ArtistService {
 
     @Transactional
     public Artist updateArtist(UpdateArtistRequest request) {
-        Artist artist = artistRepository.findById(request.id()).orElseThrow(() -> new ArtistNotFoundException("Artist not found with id: " + request.id()));
+        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
+        if (!request.id().equals(authenticatedArtistId)) throw new AccessDeniedException("You can only update your own artist profile.");
+
+        Artist artist = getArtistById(request.id());
 
         if (!artist.getEmail().equals(request.email()) && artistRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException("Email already registered");
@@ -92,7 +99,10 @@ public class ArtistService {
 
     @Transactional
     public void disableArtist(String id) {
-        Artist artist = artistRepository.findById(id).orElseThrow(() -> new ArtistNotFoundException("Artist not found with id: " + id));
+        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
+        if (!id.equals(authenticatedArtistId)) throw new AccessDeniedException("You can only disable your own artist profile.");
+
+        Artist artist = getArtistById(id);
 
         if (!artist.getActive()) throw new ArtistAlreadyDisabledException("Artist is already disabled");
 
@@ -104,7 +114,10 @@ public class ArtistService {
 
     @Transactional
     public void enableArtist(String id) {
-        Artist artist = artistRepository.findById(id).orElseThrow(() -> new ArtistNotFoundException("Artist not found with id: " + id));
+        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
+        if (!id.equals(authenticatedArtistId)) throw new AccessDeniedException("You can only enable your own artist profile.");
+
+        Artist artist = getArtistById(id);
 
         if (artist.getActive()) throw new ArtistAlreadyEnabledException("Artist is already enabled");
 
