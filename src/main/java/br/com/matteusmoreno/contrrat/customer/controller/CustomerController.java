@@ -41,7 +41,7 @@ public class CustomerController {
 
     @PatchMapping("/picture")
     public ResponseEntity<Void> updatePicture(@RequestBody UpdateProfilePictureRequest request) {
-        String authenticatedCustomerId = authenticationService.getAuthenticatedArtistId();
+        String authenticatedCustomerId = authenticationService.getAuthenticatedCustomerId();
         customerService.updateProfilePicture(authenticatedCustomerId, request.profilePictureUrl());
 
         return ResponseEntity.noContent().build();
