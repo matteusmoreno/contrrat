@@ -23,6 +23,7 @@ public class Artist {
     private String email;
     private String description;
     private Address address;
+    private String profilePictureUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;

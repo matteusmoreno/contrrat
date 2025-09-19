@@ -22,6 +22,7 @@ public class Customer {
     private String phoneNumber;
     private String email;
     private Address address;
+    private String profilePictureUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;

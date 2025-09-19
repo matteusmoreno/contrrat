@@ -5,6 +5,8 @@ import br.com.matteusmoreno.contrrat.customer.domain.Customer;
 import br.com.matteusmoreno.contrrat.customer.request.UpdateCustomerRequest;
 import br.com.matteusmoreno.contrrat.customer.response.CustomerDetailsResponse;
 import br.com.matteusmoreno.contrrat.customer.service.CustomerService;
+import br.com.matteusmoreno.contrrat.security.AuthenticationService;
+import br.com.matteusmoreno.contrrat.utils.UpdateProfilePictureRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final AuthenticationService authenticationService;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, AuthenticationService authenticationService) {
         this.customerService = customerService;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping
@@ -33,6 +37,14 @@ public class CustomerController {
         Customer customer = customerService.getCustomerById(id);
 
         return ResponseEntity.ok(new CustomerDetailsResponse(customer));
+    }
+
+    @PatchMapping("/picture")
+    public ResponseEntity<Void> updatePicture(@RequestBody UpdateProfilePictureRequest request) {
+        String authenticatedCustomerId = authenticationService.getAuthenticatedArtistId();
+        customerService.updateProfilePicture(authenticatedCustomerId, request.profilePictureUrl());
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/update")

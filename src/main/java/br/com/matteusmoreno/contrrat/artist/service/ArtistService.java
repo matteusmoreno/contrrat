@@ -71,6 +71,16 @@ public class ArtistService {
     }
 
     @Transactional
+    public void updateProfilePicture(String authenticatedArtistId, String imageUrl) {
+        Artist artist = getArtistById(authenticatedArtistId);
+
+        artist.setProfilePictureUrl(imageUrl);
+        artist.setUpdatedAt(LocalDateTime.now());
+
+        artistRepository.save(artist);
+    }
+
+    @Transactional
     public Artist updateArtist(UpdateArtistRequest request) {
         String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
         if (!request.id().equals(authenticatedArtistId)) throw new AccessDeniedException("You can only update your own artist profile.");

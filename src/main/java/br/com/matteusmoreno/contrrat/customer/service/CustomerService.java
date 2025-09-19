@@ -2,6 +2,7 @@ package br.com.matteusmoreno.contrrat.customer.service;
 
 import br.com.matteusmoreno.contrrat.address.domain.Address;
 import br.com.matteusmoreno.contrrat.address.service.AddressService;
+import br.com.matteusmoreno.contrrat.artist.domain.Artist;
 import br.com.matteusmoreno.contrrat.customer.domain.Customer;
 import br.com.matteusmoreno.contrrat.customer.repository.CustomerRepository;
 import br.com.matteusmoreno.contrrat.customer.request.CreateCustomerRequest;
@@ -61,6 +62,16 @@ public class CustomerService {
 
     public Customer getCustomerById(String id) {
         return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
+    }
+
+    @Transactional
+    public void updateProfilePicture(String authenticatedCustomerId, String imageUrl) {
+        Customer customer = getCustomerById(authenticatedCustomerId);
+
+        customer.setProfilePictureUrl(imageUrl);
+        customer.setUpdatedAt(LocalDateTime.now());
+
+        customerRepository.save(customer);
     }
 
     @Transactional
