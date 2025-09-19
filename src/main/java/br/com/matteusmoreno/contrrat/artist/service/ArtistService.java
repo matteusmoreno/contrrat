@@ -7,6 +7,8 @@ import br.com.matteusmoreno.contrrat.artist.repository.ArtistRepository;
 import br.com.matteusmoreno.contrrat.artist.request.CreateArtistRequest;
 import br.com.matteusmoreno.contrrat.artist.request.UpdateArtistRequest;
 import br.com.matteusmoreno.contrrat.exception.*;
+import br.com.matteusmoreno.contrrat.user.Profile;
+import br.com.matteusmoreno.contrrat.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +20,12 @@ public class ArtistService {
 
     private final ArtistRepository artistRepository;
     private final AddressService addressService;
+    private final UserService userService;
 
-    public ArtistService(ArtistRepository artistRepository, AddressService addressService) {
+    public ArtistService(ArtistRepository artistRepository, AddressService addressService, UserService userService) {
         this.artistRepository = artistRepository;
         this.addressService = addressService;
+        this.userService = userService;
     }
 
     @Transactional
@@ -45,7 +49,10 @@ public class ArtistService {
                 .active(true)
                 .build();
 
-        return artistRepository.save(artist);
+        artistRepository.save(artist);
+        createArtistUser(request, artist);
+
+        return artist;
     }
 
     public Artist getArtistById(String id) {
@@ -106,5 +113,9 @@ public class ArtistService {
         artist.setUpdatedAt(LocalDateTime.now());
 
         artistRepository.save(artist);
+    }
+
+    private void createArtistUser(CreateArtistRequest request, Artist artist) {
+        userService.createUser(request.name(), request.email(), Profile.ARTIST, artist.getId(), null, request.password());
     }
 }

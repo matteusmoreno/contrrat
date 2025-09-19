@@ -7,6 +7,8 @@ import br.com.matteusmoreno.contrrat.customer.repository.CustomerRepository;
 import br.com.matteusmoreno.contrrat.customer.request.CreateCustomerRequest;
 import br.com.matteusmoreno.contrrat.customer.request.UpdateCustomerRequest;
 import br.com.matteusmoreno.contrrat.exception.*;
+import br.com.matteusmoreno.contrrat.user.Profile;
+import br.com.matteusmoreno.contrrat.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +20,12 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final AddressService addressService;
+    private final UserService userService;
 
-    public CustomerService(CustomerRepository customerRepository, AddressService addressService) {
+    public CustomerService(CustomerRepository customerRepository, AddressService addressService, UserService userService) {
         this.customerRepository = customerRepository;
         this.addressService = addressService;
+        this.userService = userService;
     }
 
     @Transactional
@@ -44,7 +48,10 @@ public class CustomerService {
                 .active(true)
                 .build();
 
-        return customerRepository.save(customer);
+        customerRepository.save(customer);
+        createCustomerUser(request, customer);
+
+        return customer;
     }
 
     public Customer getCustomerById(String id) {
@@ -101,5 +108,9 @@ public class CustomerService {
         customer.setUpdatedAt(LocalDateTime.now());
 
         customerRepository.save(customer);
+    }
+
+    private void createCustomerUser(CreateCustomerRequest request, Customer customer) {
+        userService.createUser(request.name(), request.email(), Profile.CUSTOMER, null, customer.getId(), request.password());
     }
 }

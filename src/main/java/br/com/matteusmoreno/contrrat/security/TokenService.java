@@ -1,5 +1,6 @@
 package br.com.matteusmoreno.contrrat.security;
 
+import br.com.matteusmoreno.contrrat.user.User;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -17,17 +18,20 @@ public class TokenService {
     }
 
     public String generateToken(User user) {
-        Instant expiresAt = Instant.now().plusSeconds(60 * 60 * 24); // Token válido por 24 horas
+        Instant expiresAt = Instant.now().plusSeconds(60 * 60 * 24);
 
-        JwtClaimsSet claims = JwtClaimsSet.builder()
+        JwtClaimsSet.Builder claimsBuilder = JwtClaimsSet.builder()
                 .subject(user.getUsername())
-                .claim("userId", user.getUserId().toString())
+                .claim("userId", user.getUserId())
                 .claim("scope", user.getProfile().name())
                 .claim("name", user.getName())
                 .issuedAt(Instant.now())
-                .expiresAt(expiresAt)
-                .build();
+                .expiresAt(expiresAt);
 
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        // Adiciona a claim específica do perfil
+        if (user.getArtistId() != null) claimsBuilder.claim("artistId", user.getArtistId());
+        if (user.getCustomerId() != null) claimsBuilder.claim("customerId", user.getCustomerId());
+
+        return jwtEncoder.encode(JwtEncoderParameters.from(claimsBuilder.build())).getTokenValue();
     }
 }

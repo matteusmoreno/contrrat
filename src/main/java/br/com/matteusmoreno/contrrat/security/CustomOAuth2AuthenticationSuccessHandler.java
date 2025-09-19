@@ -1,11 +1,12 @@
 package br.com.matteusmoreno.contrrat.security;
 
+import br.com.matteusmoreno.contrrat.user.User;
+import br.com.matteusmoreno.contrrat.user.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
     @Value("${app.oauth2.redirect-uri}")
     private String frontendRedirectUri;
 
-    private final TokenService tokenService;
+    private final br.com.matteusmoreno.contrrat.security.TokenService tokenService;
     private final UserService userService;
 
     public CustomOAuth2AuthenticationSuccessHandler(TokenService tokenService, UserService userService) {
@@ -34,9 +35,8 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         String email = oauth2User.getAttribute("email");
         String name = oauth2User.getAttribute("name");
 
-        //User user = userService.findOrCreateUserForOAuth(email, name);
-
-        //String token = tokenService.generateToken(user);
+        User user = userService.findOrCreateUserForOAuth(email, name);
+        String token = tokenService.generateToken(user);
 
         String targetUrl = UriComponentsBuilder.fromUriString(frontendRedirectUri)
                 .queryParam("token", token)

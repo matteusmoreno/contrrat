@@ -18,6 +18,8 @@ public record CreateArtistRequest(
         @NotBlank(message = "Email is required")
         @Email(message = "Email must be valid")
         String email,
+        @NotBlank(message = "Password is required")
+        String password,
         String description,
         @NotBlank(message = "CEP is required")
         @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP must be in the format xxxxx-xxx")
