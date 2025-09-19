@@ -25,20 +25,28 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                        // Endpoints Públicos (login, cadastro de usuário, busca de artistas)
+                        // Endpoints Públicos
                         .requestMatchers("/login/**", "/oauth2/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/artists", "/customers").permitAll() // Cadastro de perfis
-                        .requestMatchers(HttpMethod.GET, "/artists/**", "/availability/**").permitAll() // Busca pública
+                        .requestMatchers(HttpMethod.POST, "/artists", "/customers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/artists/**", "/availability/**").permitAll()
 
                         // Regras para Contratos
-                        .requestMatchers(HttpMethod.POST, "/contracts").hasRole("CUSTOMER") // Só clientes criam contratos
-                        .requestMatchers("/contracts/confirm/**", "/contracts/reject/**").hasRole("ARTIST") // Só artistas gerenciam
+                        .requestMatchers(HttpMethod.POST, "/contracts").hasAuthority("SCOPE_CUSTOMER") // Usar hasAuthority com prefixo SCOPE_
+                        .requestMatchers("/contracts/my-contracts-as-customer").hasAuthority("SCOPE_CUSTOMER")
+                        .requestMatchers("/contracts/confirm/**", "/contracts/reject/**").hasAuthority("SCOPE_ARTIST")
+                        .requestMatchers("/contracts/my-contracts-as-artist").hasAuthority("SCOPE_ARTIST")
+
+                        // Regra para um artista gerenciar sua própria disponibilidade
+                        .requestMatchers(HttpMethod.POST, "/availability").hasAuthority("SCOPE_ARTIST")
+                        .requestMatchers(HttpMethod.PUT, "/availability/update").hasAuthority("SCOPE_ARTIST")
+                        .requestMatchers(HttpMethod.PATCH, "/availability/change-status/**").hasAuthority("SCOPE_ARTIST")
+
 
                         // Qualquer outra requisição precisa de autenticação
                         .anyRequest().authenticated())
 
                 .oauth2Login(oauth2 -> oauth2.successHandler(customOAuth2AuthenticationSuccessHandler))
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())) // Simplificado
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf -> csrf.disable())
                 .build();

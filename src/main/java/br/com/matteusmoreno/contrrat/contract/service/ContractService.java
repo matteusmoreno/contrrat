@@ -7,11 +7,14 @@ import br.com.matteusmoreno.contrrat.contract.constant.ContractStatus;
 import br.com.matteusmoreno.contrrat.contract.domain.Contract;
 import br.com.matteusmoreno.contrrat.contract.repository.ContractRepository;
 import br.com.matteusmoreno.contrrat.contract.request.CreateContractRequest;
+import br.com.matteusmoreno.contrrat.contract.response.ContractDetailsResponse;
 import br.com.matteusmoreno.contrrat.exception.ContractNotFoundException;
 import br.com.matteusmoreno.contrrat.exception.InvalidContractStatusException;
 import br.com.matteusmoreno.contrrat.exception.MismatchedArtistsException;
 import br.com.matteusmoreno.contrrat.exception.SlotsNotAvailableException;
 import br.com.matteusmoreno.contrrat.security.AuthenticationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +68,18 @@ public class ContractService {
                 availabilityService.changeAvailabilityStatus(availability.getId(), AvailabilityStatus.UNAVAILABLE));
 
         return contractRepository.save(contract);
+    }
+
+    public Page<ContractDetailsResponse> getContractsForAuthenticatedCustomer(Pageable pageable) {
+        String customerId = authenticationService.getAuthenticatedCustomerId();
+        return contractRepository.findAllByCustomerId(customerId, pageable)
+                .map(ContractDetailsResponse::new);
+    }
+
+    public Page<ContractDetailsResponse> getContractsForAuthenticatedArtist(Pageable pageable) {
+        String artistId = authenticationService.getAuthenticatedArtistId();
+        return contractRepository.findAllByArtistId(artistId, pageable)
+                .map(ContractDetailsResponse::new);
     }
 
     @Transactional
