@@ -6,6 +6,8 @@ import br.com.matteusmoreno.contrrat.artist.request.UpdateArtistRequest;
 import br.com.matteusmoreno.contrrat.artist.response.ArtistDetailsResponse;
 import br.com.matteusmoreno.contrrat.artist.service.ArtistService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -35,6 +37,13 @@ public class ArtistController {
         Artist artist = artistService.getArtistById(id);
 
         return ResponseEntity.ok(new ArtistDetailsResponse(artist));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<ArtistDetailsResponse>> getAll(Pageable pageable) {
+        Page<ArtistDetailsResponse> artists = artistService.getAllArtists(pageable);
+
+        return ResponseEntity.ok(artists);
     }
 
     @PutMapping("/update")

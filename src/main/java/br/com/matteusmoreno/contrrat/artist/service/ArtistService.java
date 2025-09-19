@@ -6,10 +6,13 @@ import br.com.matteusmoreno.contrrat.artist.domain.Artist;
 import br.com.matteusmoreno.contrrat.artist.repository.ArtistRepository;
 import br.com.matteusmoreno.contrrat.artist.request.CreateArtistRequest;
 import br.com.matteusmoreno.contrrat.artist.request.UpdateArtistRequest;
+import br.com.matteusmoreno.contrrat.artist.response.ArtistDetailsResponse;
 import br.com.matteusmoreno.contrrat.exception.*;
 import br.com.matteusmoreno.contrrat.security.AuthenticationService;
 import br.com.matteusmoreno.contrrat.user.constant.Profile;
 import br.com.matteusmoreno.contrrat.user.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +64,10 @@ public class ArtistService {
 
     public Artist getArtistById(String id) {
         return artistRepository.findById(id).orElseThrow(() -> new ArtistNotFoundException("Artist not found with id: " + id));
+    }
+
+    public Page<ArtistDetailsResponse> getAllArtists(Pageable pageable) {
+        return artistRepository.findAll(pageable).map(ArtistDetailsResponse::new);
     }
 
     @Transactional
