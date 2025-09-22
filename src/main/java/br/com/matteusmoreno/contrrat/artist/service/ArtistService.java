@@ -49,6 +49,7 @@ public class ArtistService {
                 .phoneNumber(request.phoneNumber())
                 .email(request.email())
                 .description(request.description())
+                .profilePictureUrl(request.profilePictureUrl())
                 .address(address)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(null)

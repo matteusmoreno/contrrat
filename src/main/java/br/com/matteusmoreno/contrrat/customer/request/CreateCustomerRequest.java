@@ -20,6 +20,7 @@ public record CreateCustomerRequest(
         String email,
         @NotBlank(message = "Password is required")
         String password,
+        String profilePictureUrl,
         @NotBlank(message = "CEP is required")
         @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP must be in the format xxxxx-xxx")
         String cep,

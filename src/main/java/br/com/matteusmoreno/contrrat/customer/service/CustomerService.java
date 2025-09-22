@@ -47,6 +47,7 @@ public class CustomerService {
                 .birthDate(request.birthDate())
                 .phoneNumber(request.phoneNumber())
                 .email(request.email())
+                .profilePictureUrl(request.profilePictureUrl())
                 .address(address)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(null)
