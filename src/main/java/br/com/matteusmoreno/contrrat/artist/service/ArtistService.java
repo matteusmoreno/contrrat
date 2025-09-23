@@ -45,6 +45,7 @@ public class ArtistService {
         Artist artist = Artist.builder()
                 .id(UUID.randomUUID().toString())
                 .name(request.name())
+                .artisticField(request.artisticField())
                 .birthDate(request.birthDate())
                 .phoneNumber(request.phoneNumber())
                 .email(request.email())
@@ -97,6 +98,7 @@ public class ArtistService {
         }
 
         if (request.name() != null) artist.setName(request.name());
+        if (request.artisticField() != null) artist.setArtisticField(request.artisticField());
         if (request.birthDate() != null) artist.setBirthDate(request.birthDate());
         if (request.phoneNumber() != null) artist.setPhoneNumber(request.phoneNumber());
         if (request.email() != null) artist.setEmail(request.email());

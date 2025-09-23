@@ -1,5 +1,6 @@
 package br.com.matteusmoreno.contrrat.artist.controller;
 
+import br.com.matteusmoreno.contrrat.artist.constant.ArtisticField;
 import br.com.matteusmoreno.contrrat.artist.domain.Artist;
 import br.com.matteusmoreno.contrrat.artist.request.CreateArtistRequest;
 import br.com.matteusmoreno.contrrat.artist.request.UpdateArtistRequest;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/artists")
@@ -50,6 +55,20 @@ public class ArtistController {
         Page<ArtistDetailsResponse> artists = artistService.getAllArtists(pageable);
 
         return ResponseEntity.ok(artists);
+    }
+
+    //DEPOS PASSAR A LÓGICA PARA O SERVICE
+    @GetMapping("/artistic-fields")
+    public ResponseEntity<List<Map<String, String>>> getArtisticFields() {
+        List<Map<String, String>> fields = Arrays.stream(ArtisticField.values())
+                .map(field -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("name", field.name()); // Ex: "MUSICO_INSTRUMENTISTA"
+                    map.put("displayName", field.getDisplayName()); // Ex: "Músico Instrumentista"
+                    return map;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(fields);
     }
 
     @PatchMapping("/picture")

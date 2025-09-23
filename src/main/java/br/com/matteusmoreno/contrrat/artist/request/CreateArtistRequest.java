@@ -1,5 +1,6 @@
 package br.com.matteusmoreno.contrrat.artist.request;
 
+import br.com.matteusmoreno.contrrat.artist.constant.ArtisticField;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,8 @@ import java.time.LocalDate;
 public record CreateArtistRequest(
         @NotBlank(message = "Name is required")
         String name,
+        @NotNull(message = "Artistic field is required")
+        ArtisticField artisticField,
         @NotNull(message = "Birth date is required")
         LocalDate birthDate,
         @NotBlank(message = "Phone number is required")

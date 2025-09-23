@@ -1,6 +1,7 @@
 package br.com.matteusmoreno.contrrat.artist.domain;
 
 import br.com.matteusmoreno.contrrat.address.domain.Address;
+import br.com.matteusmoreno.contrrat.artist.constant.ArtisticField;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,6 +19,7 @@ public class Artist {
     @Id
     private String id;
     private String name;
+    private ArtisticField artisticField;
     private LocalDate birthDate;
     private String phoneNumber;
     private String email;

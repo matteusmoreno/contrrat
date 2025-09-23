@@ -1,6 +1,7 @@
 package br.com.matteusmoreno.contrrat.artist.response;
 
 import br.com.matteusmoreno.contrrat.address.response.AddressDetailsResponse;
+import br.com.matteusmoreno.contrrat.artist.constant.ArtisticField;
 import br.com.matteusmoreno.contrrat.artist.domain.Artist;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 public record ArtistDetailsResponse(
     String id,
     String name,
+    ArtisticField artisticField,
     String birthDate,
     String phoneNumber,
     String email,
@@ -23,6 +25,7 @@ public record ArtistDetailsResponse(
         this(
             artist.getId(),
             artist.getName(),
+            artist.getArtisticField(),
             artist.getBirthDate().toString(),
             artist.getPhoneNumber(),
             artist.getEmail(),
