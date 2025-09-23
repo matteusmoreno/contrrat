@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    container_name: contrrat-backend
+    ports:
+      - "8686:8686"
+    environment:
+      - SPRING_CONFIG_LOCATION=file:/config/application.properties
+    volumes:
+      - ./src/main/resources/application.properties:/config/application.properties
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: contrrat-mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

@@ -62,10 +62,20 @@ public class AvailabilityService {
     @Transactional
     public Availability updateAvailability(UpdateAvailabilityRequest request) {
         String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
-
         Availability availability = getAvailabilityById(request.id());
 
-        if (!availability.getArtistId().equals(authenticatedArtistId)) throw new AccessDeniedException("User is not authorized to update this availability.");
+        if (!availability.getArtistId().equals(authenticatedArtistId)) {
+            throw new AccessDeniedException("User is not authorized to update this availability.");
+        }
+
+        if (request.startTime() != null && request.endTime() != null) {
+            if (request.endTime().isBefore(request.startTime())) {
+                throw new InvalidTimeRangeException("End time cannot be before start time");
+            }
+            if (request.startTime().isBefore(LocalDateTime.now()) || request.endTime().isBefore(LocalDateTime.now())) {
+                throw new InvalidTimeRangeException("Availability times must be in the future");
+            }
+        }
 
         if (request.startTime() != null) availability.setStartTime(request.startTime());
         if (request.endTime() != null) availability.setEndTime(request.endTime());
