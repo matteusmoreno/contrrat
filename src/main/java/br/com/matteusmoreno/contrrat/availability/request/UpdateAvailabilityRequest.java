@@ -1,8 +1,9 @@
 package br.com.matteusmoreno.contrrat.availability.request;
 
+import br.com.matteusmoreno.contrrat.availability.constant.AvailabilityStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,5 +15,6 @@ public record UpdateAvailabilityRequest(
         LocalDateTime startTime,
         @NotNull(message = "End time is required")
         LocalDateTime endTime,
-        @Positive(message = "Price must be positive")
+        AvailabilityStatus availabilityStatus,
+        @PositiveOrZero(message = "Price must be positive or zero")
         BigDecimal price) {}

@@ -15,6 +15,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -62,18 +63,34 @@ public class AvailabilityService {
     public Availability updateAvailability(UpdateAvailabilityRequest request) {
         String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
 
-        if (request.endTime().isBefore(request.startTime())) throw new InvalidTimeRangeException("End time cannot be before start time");
-        if (request.startTime().isBefore(LocalDateTime.now()) || request.endTime().isBefore(LocalDateTime.now())) throw new InvalidTimeRangeException("Availability times must be in the future");
-
         Availability availability = getAvailabilityById(request.id());
 
         if (!availability.getArtistId().equals(authenticatedArtistId)) throw new AccessDeniedException("User is not authorized to update this availability.");
 
-        availability.setStartTime(request.startTime());
-        availability.setEndTime(request.endTime());
-        if (request.price() != null) availability.setPrice(request.price());
+        if (request.startTime() != null) availability.setStartTime(request.startTime());
+        if (request.endTime() != null) availability.setEndTime(request.endTime());
+        if (request.availabilityStatus() != null) availability.setAvailabilityStatus(request.availabilityStatus());
+
+        if (request.availabilityStatus() == AvailabilityStatus.AVAILABLE && (request.price() == null || request.price().compareTo(BigDecimal.ZERO) <= 0)) {
+            throw new IllegalArgumentException("Price must be a positive value for available slots.");
+        }
+
+        availability.setPrice(request.price());
 
         return availabilityRepository.save(availability);
+    }
+
+    @Transactional
+    public void deleteAvailability(String id) {
+        Availability availability = getAvailabilityById(id);
+        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
+        if (!availability.getArtistId().equals(authenticatedArtistId)) throw new AccessDeniedException("You can only delete your own availability.");
+
+        if (availability.getAvailabilityStatus() == AvailabilityStatus.BOOKED) {
+            throw new IllegalStateException("Cannot delete a booked availability.");
+        }
+
+        availabilityRepository.deleteById(id);
     }
 
     @Transactional

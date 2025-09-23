@@ -51,10 +51,9 @@ public class AvailabilityController {
         return ResponseEntity.ok(new AvailabilityDetailsResponse(availability));
     }
 
-    @PatchMapping("/change-status/{id}")
-    public ResponseEntity<Void> changeStatus(@PathVariable String id, @RequestParam AvailabilityStatus status) {
-        availabilityService.changeAvailabilityStatus(id, status);
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        availabilityService.deleteAvailability(id);
         return ResponseEntity.noContent().build();
     }
 }
