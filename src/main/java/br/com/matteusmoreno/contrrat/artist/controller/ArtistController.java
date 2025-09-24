@@ -57,17 +57,9 @@ public class ArtistController {
         return ResponseEntity.ok(artists);
     }
 
-    //DEPOS PASSAR A LÓGICA PARA O SERVICE
     @GetMapping("/artistic-fields")
     public ResponseEntity<List<Map<String, String>>> getArtisticFields() {
-        List<Map<String, String>> fields = Arrays.stream(ArtisticField.values())
-                .map(field -> {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("name", field.name()); // Ex: "MUSICO_INSTRUMENTISTA"
-                    map.put("displayName", field.getDisplayName()); // Ex: "Músico Instrumentista"
-                    return map;
-                })
-                .collect(Collectors.toList());
+        List<Map<String, String>> fields = artistService.getArtisticFields();
         return ResponseEntity.ok(fields);
     }
 

@@ -36,8 +36,11 @@ public class AvailabilityService {
         String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
         if (!request.artistId().equals(authenticatedArtistId)) throw new AccessDeniedException("You can only create availability for your own artist profile.");
 
-        if (request.endTime().isBefore(request.startTime())) throw new InvalidTimeRangeException("End time cannot be before start time");
-        if (request.startTime().isBefore(LocalDateTime.now()) || request.endTime().isBefore(LocalDateTime.now())) throw new InvalidTimeRangeException("Availability times must be in the future");
+        validateTime(request.startTime(), request.endTime());
+
+        if (request.availabilityStatus() == AvailabilityStatus.AVAILABLE && (request.price() == null || request.price().compareTo(BigDecimal.ZERO) <= 0)) {
+            throw new IllegalArgumentException("Price must be a positive value for available slots.");
+        }
 
         Availability availability = Availability.builder()
                 .id(UUID.randomUUID().toString())
@@ -69,23 +72,29 @@ public class AvailabilityService {
         }
 
         if (request.startTime() != null && request.endTime() != null) {
-            if (request.endTime().isBefore(request.startTime())) {
-                throw new InvalidTimeRangeException("End time cannot be before start time");
-            }
-            if (request.startTime().isBefore(LocalDateTime.now()) || request.endTime().isBefore(LocalDateTime.now())) {
-                throw new InvalidTimeRangeException("Availability times must be in the future");
-            }
+            validateTime(request.startTime(), request.endTime());
+        } else if (request.startTime() != null) {
+            validateTime(request.startTime(), availability.getEndTime());
+        } else if (request.endTime() != null) {
+            validateTime(availability.getStartTime(), request.endTime());
         }
+
 
         if (request.startTime() != null) availability.setStartTime(request.startTime());
         if (request.endTime() != null) availability.setEndTime(request.endTime());
         if (request.availabilityStatus() != null) availability.setAvailabilityStatus(request.availabilityStatus());
 
+
         if (request.availabilityStatus() == AvailabilityStatus.AVAILABLE && (request.price() == null || request.price().compareTo(BigDecimal.ZERO) <= 0)) {
             throw new IllegalArgumentException("Price must be a positive value for available slots.");
         }
 
-        availability.setPrice(request.price());
+        if (request.price() != null) {
+            availability.setPrice(request.price());
+        } else if (request.availabilityStatus() != AvailabilityStatus.AVAILABLE) {
+            availability.setPrice(null); // Limpa o preço se não estiver disponível
+        }
+
 
         return availabilityRepository.save(availability);
     }
@@ -116,4 +125,8 @@ public class AvailabilityService {
         availabilityRepository.save(availability);
     }
 
+    private void validateTime(LocalDateTime startTime, LocalDateTime endTime) {
+        if (endTime.isBefore(startTime)) throw new InvalidTimeRangeException("End time cannot be before start time");
+        if (startTime.isBefore(LocalDateTime.now())) throw new InvalidTimeRangeException("Availability start time must be in the future");
+    }
 }

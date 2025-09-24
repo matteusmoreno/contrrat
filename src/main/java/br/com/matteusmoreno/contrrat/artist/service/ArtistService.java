@@ -2,6 +2,7 @@ package br.com.matteusmoreno.contrrat.artist.service;
 
 import br.com.matteusmoreno.contrrat.address.domain.Address;
 import br.com.matteusmoreno.contrrat.address.service.AddressService;
+import br.com.matteusmoreno.contrrat.artist.constant.ArtisticField;
 import br.com.matteusmoreno.contrrat.artist.domain.Artist;
 import br.com.matteusmoreno.contrrat.artist.repository.ArtistRepository;
 import br.com.matteusmoreno.contrrat.artist.request.CreateArtistRequest;
@@ -18,7 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ArtistService {
@@ -70,6 +72,17 @@ public class ArtistService {
 
     public Page<ArtistDetailsResponse> getAllArtists(Pageable pageable) {
         return artistRepository.findAll(pageable).map(ArtistDetailsResponse::new);
+    }
+
+    public List<Map<String, String>> getArtisticFields() {
+        return Arrays.stream(ArtisticField.values())
+                .map(field -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("name", field.name());
+                    map.put("displayName", field.getDisplayName());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional
