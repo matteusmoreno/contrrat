@@ -26,6 +26,7 @@ public class Artist {
     private String description;
     private Address address;
     private String profilePictureUrl;
+    private Boolean premium;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;

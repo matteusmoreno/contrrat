@@ -57,6 +57,24 @@ public class ArtistController {
         return ResponseEntity.ok(artists);
     }
 
+    @GetMapping("/artists-by-field/{artisticField}")
+    public ResponseEntity<Page<ArtistDetailsResponse>> getByArtisticField(@PathVariable ArtisticField artisticField, Pageable pageable) {
+        Page<ArtistDetailsResponse> artists = artistService.getArtistsByArtisticField(artisticField, pageable);
+        return ResponseEntity.ok(artists);
+    }
+
+    @GetMapping("/premium-artists")
+    public ResponseEntity<Page<ArtistDetailsResponse>> getPremiumArtists(Pageable pageable) {
+        Page<ArtistDetailsResponse> artists = artistService.getArtistsByPremium(pageable);
+        return ResponseEntity.ok(artists);
+    }
+
+    @GetMapping("/all-active")
+    public ResponseEntity<Page<ArtistDetailsResponse>> getAllActive(Pageable pageable) {
+        Page<ArtistDetailsResponse> artists = artistService.getAllActiveArtists(pageable);
+        return ResponseEntity.ok(artists);
+    }
+
     @GetMapping("/artistic-fields")
     public ResponseEntity<List<Map<String, String>>> getArtisticFields() {
         List<Map<String, String>> fields = artistService.getArtisticFields();

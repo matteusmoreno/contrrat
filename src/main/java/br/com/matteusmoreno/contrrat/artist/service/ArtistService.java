@@ -55,6 +55,7 @@ public class ArtistService {
                 .profilePictureUrl(request.profilePictureUrl())
                 .address(address)
                 .createdAt(LocalDateTime.now())
+                .premium(false)
                 .updatedAt(null)
                 .deletedAt(null)
                 .active(true)
@@ -72,6 +73,18 @@ public class ArtistService {
 
     public Page<ArtistDetailsResponse> getAllArtists(Pageable pageable) {
         return artistRepository.findAll(pageable).map(ArtistDetailsResponse::new);
+    }
+
+    public Page<ArtistDetailsResponse> getArtistsByArtisticField(ArtisticField artisticField, Pageable pageable) {
+        return artistRepository.findAllByArtisticField(artisticField, pageable).map(ArtistDetailsResponse::new);
+    }
+
+    public Page<ArtistDetailsResponse> getArtistsByPremium(Pageable pageable) {
+        return artistRepository.findAllByPremiumIsTrue(pageable).map(ArtistDetailsResponse::new);
+    }
+
+    public Page<ArtistDetailsResponse> getAllActiveArtists(Pageable pageable) {
+        return artistRepository.findAllByActiveTrue(pageable).map(ArtistDetailsResponse::new);
     }
 
     public List<Map<String, String>> getArtisticFields() {

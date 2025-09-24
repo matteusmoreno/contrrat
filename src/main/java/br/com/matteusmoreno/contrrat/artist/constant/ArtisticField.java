@@ -1,6 +1,9 @@
 package br.com.matteusmoreno.contrrat.artist.constant;
 
 
+import lombok.Getter;
+
+@Getter
 public enum ArtisticField {
     BANDA("Banda"),
     CANTOR("Cantor(a)"),
@@ -30,7 +33,4 @@ public enum ArtisticField {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
 }

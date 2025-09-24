@@ -37,7 +37,7 @@ public class SecurityConfig {
                         // Endpoints Públicos
                         .requestMatchers("/login/**", "/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/artists", "/customers").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/artists/**", "/availability/**", "/signature/**", "/artists/artistic-fields").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/artists/**", "/availability/**", "/signature/**", "/artists/artistic-fields", "/artists/artists-by-field/**", "/artists/premium-artists", "/artists/all-active").permitAll()
 
                         // Regras para Contratos
                         .requestMatchers(HttpMethod.POST, "/contracts").hasAuthority("SCOPE_CUSTOMER") // Usar hasAuthority com prefixo SCOPE_
