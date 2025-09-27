@@ -1,5 +1,7 @@
 package br.com.matteusmoreno.contrrat.contract.service;
 
+import br.com.matteusmoreno.contrrat.artist.repository.ArtistRepository;
+import br.com.matteusmoreno.contrrat.artist.response.ArtistSummaryResponse;
 import br.com.matteusmoreno.contrrat.availability.constant.AvailabilityStatus;
 import br.com.matteusmoreno.contrrat.availability.domain.Availability;
 import br.com.matteusmoreno.contrrat.availability.service.AvailabilityService;
@@ -8,10 +10,9 @@ import br.com.matteusmoreno.contrrat.contract.domain.Contract;
 import br.com.matteusmoreno.contrrat.contract.repository.ContractRepository;
 import br.com.matteusmoreno.contrrat.contract.request.CreateContractRequest;
 import br.com.matteusmoreno.contrrat.contract.response.ContractDetailsResponse;
-import br.com.matteusmoreno.contrrat.exception.ContractNotFoundException;
-import br.com.matteusmoreno.contrrat.exception.InvalidContractStatusException;
-import br.com.matteusmoreno.contrrat.exception.MismatchedArtistsException;
-import br.com.matteusmoreno.contrrat.exception.SlotsNotAvailableException;
+import br.com.matteusmoreno.contrrat.customer.repository.CustomerRepository;
+import br.com.matteusmoreno.contrrat.customer.response.CustomerSummaryResponse;
+import br.com.matteusmoreno.contrrat.exception.*;
 import br.com.matteusmoreno.contrrat.security.AuthenticationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,11 +31,15 @@ public class ContractService {
     private final ContractRepository contractRepository;
     private final AvailabilityService availabilityService;
     private final AuthenticationService authenticationService;
+    private final ArtistRepository artistRepository;
+    private final CustomerRepository customerRepository;
 
-    public ContractService(ContractRepository contractRepository, AvailabilityService availabilityService, AuthenticationService authenticationService) {
+    public ContractService(ContractRepository contractRepository, AvailabilityService availabilityService, AuthenticationService authenticationService, ArtistRepository artistRepository, CustomerRepository customerRepository) {
         this.contractRepository = contractRepository;
         this.availabilityService = availabilityService;
         this.authenticationService = authenticationService;
+        this.artistRepository = artistRepository;
+        this.customerRepository = customerRepository;
     }
 
     @Transactional
@@ -73,13 +78,13 @@ public class ContractService {
     public Page<ContractDetailsResponse> getContractsForAuthenticatedCustomer(Pageable pageable) {
         String customerId = authenticationService.getAuthenticatedCustomerId();
         return contractRepository.findAllByCustomerId(customerId, pageable)
-                .map(ContractDetailsResponse::new);
+                .map(this::toContractDetailsResponse);
     }
 
     public Page<ContractDetailsResponse> getContractsForAuthenticatedArtist(Pageable pageable) {
         String artistId = authenticationService.getAuthenticatedArtistId();
         return contractRepository.findAllByArtistId(artistId, pageable)
-                .map(ContractDetailsResponse::new);
+                .map(this::toContractDetailsResponse);
     }
 
     @Transactional
@@ -120,9 +125,6 @@ public class ContractService {
 
 
 
-
-
-
     // MÉTODOS PRIVADOS
     private void validateAvailabilities(List<Availability> availabilities) {
         if (availabilities.stream().map(Availability::getArtistId).distinct().count() > 1) {
@@ -131,5 +133,17 @@ public class ContractService {
         if (availabilities.stream().anyMatch(a -> a.getAvailabilityStatus() != AvailabilityStatus.AVAILABLE)) {
             throw new SlotsNotAvailableException("One or more availability slots are not available for booking.");
         }
+    }
+
+    private ContractDetailsResponse toContractDetailsResponse(Contract contract) {
+        var artist = artistRepository.findById(contract.getArtistId())
+                .map(ArtistSummaryResponse::new)
+                .orElseThrow(() -> new ArtistNotFoundException("Artist not found for contract"));
+
+        var customer = customerRepository.findById(contract.getCustomerId())
+                .map(CustomerSummaryResponse::new)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found for contract"));
+
+        return new ContractDetailsResponse(contract, artist, customer);
     }
 }

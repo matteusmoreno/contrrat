@@ -29,7 +29,7 @@ public class ContractController {
         Contract contract = contractService.createContract(request);
         URI uri = uriBuilder.path("/contracts/{id}").buildAndExpand(contract.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(new ContractDetailsResponse(contract));
+        return ResponseEntity.created(uri).build();
     }
 
     @GetMapping("/my-contracts-as-customer")

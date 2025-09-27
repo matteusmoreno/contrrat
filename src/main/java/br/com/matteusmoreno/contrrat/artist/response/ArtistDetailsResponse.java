@@ -25,8 +25,7 @@ public record ArtistDetailsResponse(
     public ArtistDetailsResponse(Artist artist) {
         this(
             artist.getId(),
-            artist.getName(),
-            artist.getArtisticField() != null ? artist.getArtisticField().getDisplayName() : null,
+            artist.getName(), artist.getArtisticField() != null ? artist.getArtisticField().getDisplayName() : null,
             artist.getBirthDate().toString(),
             artist.getPhoneNumber(),
             artist.getEmail(),
