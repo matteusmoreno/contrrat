@@ -57,4 +57,11 @@ public class ContractController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/cancel/{contractId}")
+    public ResponseEntity<Void> cancelContract(@PathVariable String contractId) {
+        contractService.cancelContract(contractId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/contracts/my-contracts-as-customer").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/contracts/my-contracts-as-artist").hasAuthority("ROLE_ARTIST")
                         .requestMatchers("/contracts/confirm/**", "/contracts/reject/**").hasAuthority("ROLE_ARTIST")
+                        .requestMatchers("/contracts/cancel/**").hasAnyAuthority("ROLE_ARTIST", "ROLE_CUSTOMER")
 
                         // Endpoints de Disponibilidade (Apenas Artistas)
                         .requestMatchers(HttpMethod.POST, "/availability").hasAuthority("ROLE_ARTIST")

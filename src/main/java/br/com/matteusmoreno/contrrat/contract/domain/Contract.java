@@ -26,4 +26,6 @@ public class Contract {
     private LocalDateTime createdAt;
     private LocalDateTime confirmedAt;
     private LocalDateTime rejectedAt;
+    private LocalDateTime canceledAt;
+    private LocalDateTime completedAt;
 }

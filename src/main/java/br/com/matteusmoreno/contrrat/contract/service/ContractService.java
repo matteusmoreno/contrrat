@@ -123,6 +123,33 @@ public class ContractService {
         contractRepository.save(contract);
     }
 
+    @Transactional
+    public void cancelContract(String contractId) {
+        String authenticatedProfileId;
+        try {
+            authenticatedProfileId = authenticationService.getAuthenticatedCustomerId();
+        } catch (AccessDeniedException e) {
+            authenticatedProfileId = authenticationService.getAuthenticatedArtistId();
+        }
+
+        Contract contract = contractRepository.findById(contractId).orElseThrow(() -> new ContractNotFoundException("Contract not found"));
+
+        if (!contract.getCustomerId().equals(authenticatedProfileId) && !contract.getArtistId().equals(authenticatedProfileId)) {
+            throw new AccessDeniedException("User is not authorized to cancel this contract.");
+        }
+
+        if (contract.getContractStatus() != ContractStatus.PENDING_CONFIRMATION && contract.getContractStatus() != ContractStatus.CONFIRMED) {
+            throw new InvalidContractStatusException("Contract cannot be canceled as it is neither pending confirmation nor confirmed.");
+        }
+
+        contract.setContractStatus(ContractStatus.CANCELED);
+        contract.setCanceledAt(LocalDateTime.now());
+
+        contract.getAvailabilityIds().forEach(availabilityId ->
+                availabilityService.changeAvailabilityStatus(availabilityId, AvailabilityStatus.AVAILABLE));
+
+        contractRepository.save(contract);
+    }
 
 
     // MÉTODOS PRIVADOS
