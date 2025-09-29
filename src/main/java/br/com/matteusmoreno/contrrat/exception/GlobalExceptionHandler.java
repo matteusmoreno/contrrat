@@ -99,4 +99,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
         return new ResponseEntity<>("You do not have permission to access this resource", HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(ArtistAlreadyPremiumException.class)
+    public ResponseEntity<String> handleArtistAlreadyPremiumException(ArtistAlreadyPremiumException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

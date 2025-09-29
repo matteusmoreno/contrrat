@@ -96,6 +96,12 @@ public class ArtistController {
         return ResponseEntity.ok(new ArtistDetailsResponse(artist));
     }
 
+    @PatchMapping("/promote/{id}")
+    public ResponseEntity<Void> promoteToPremium(@PathVariable String id) {
+        artistService.upgradeToPremium(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/disable/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         artistService.disableArtist(id);

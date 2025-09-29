@@ -42,6 +42,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/artists", "/customers").permitAll()
                         .requestMatchers(HttpMethod.GET, "/artists/**", "/availability/**", "/signature/**").permitAll()
 
+                        //
+                        .requestMatchers("/artists/promote/**").hasAuthority("ROLE_ARTIST")
+
                         // Endpoints de Contrato
                         .requestMatchers(HttpMethod.POST, "/contracts").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/contracts/my-contracts-as-customer").hasAuthority("ROLE_CUSTOMER")

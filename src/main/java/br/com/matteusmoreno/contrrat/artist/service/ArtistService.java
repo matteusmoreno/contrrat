@@ -144,6 +144,21 @@ public class ArtistService {
     }
 
     @Transactional
+    public void upgradeToPremium(String id) {
+        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
+        if (!id.equals(authenticatedArtistId)) throw new AccessDeniedException("You can only upgrade your own artist profile.");
+
+        Artist artist = getArtistById(id);
+
+        if (artist.getPremium()) throw new ArtistAlreadyPremiumException("Artist is already premium");
+
+        artist.setPremium(true);
+        artist.setUpdatedAt(LocalDateTime.now());
+
+        artistRepository.save(artist);
+    }
+
+    @Transactional
     public void disableArtist(String id) {
         String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
         if (!id.equals(authenticatedArtistId)) throw new AccessDeniedException("You can only disable your own artist profile.");
