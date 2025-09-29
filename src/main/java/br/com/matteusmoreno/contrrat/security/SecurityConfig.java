@@ -34,32 +34,32 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         // Endpoints Públicos
                         .requestMatchers("/login/**", "/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/artists", "/customers").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/artists/**", "/availability/**", "/signature/**", "/artists/artistic-fields", "/artists/artists-by-field/**", "/artists/premium-artists", "/artists/all-active").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/artists/**", "/availability/**", "/signature/**").permitAll()
 
-                        // --- INÍCIO DA ALTERAÇÃO (DEBUG) ---
-                        // Temporariamente permitir todas as requisições POST para /contracts
-                        .requestMatchers(HttpMethod.POST, "/contracts").permitAll()
+                        // Endpoints de Contrato
+                        .requestMatchers(HttpMethod.POST, "/contracts").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/contracts/my-contracts-as-customer").hasAuthority("ROLE_CUSTOMER")
-                        .requestMatchers("/contracts/confirm/**", "/contracts/reject/**").hasAuthority("ROLE_ARTIST")
                         .requestMatchers("/contracts/my-contracts-as-artist").hasAuthority("ROLE_ARTIST")
-                        // --- FIM DA ALTERAÇÃO (DEBUG) ---
+                        .requestMatchers("/contracts/confirm/**", "/contracts/reject/**").hasAuthority("ROLE_ARTIST")
 
-                        // Regra para um artista gerenciar sua própria disponibilidade
+                        // Endpoints de Disponibilidade (Apenas Artistas)
                         .requestMatchers(HttpMethod.POST, "/availability").hasAuthority("ROLE_ARTIST")
                         .requestMatchers(HttpMethod.PUT, "/availability/update").hasAuthority("ROLE_ARTIST")
+                        .requestMatchers(HttpMethod.DELETE, "/availability/**").hasAuthority("ROLE_ARTIST")
                         .requestMatchers(HttpMethod.PATCH, "/availability/change-status/**").hasAuthority("ROLE_ARTIST")
+
 
                         // Qualquer outra requisição precisa de autenticação
                         .anyRequest().authenticated())
 
                 .oauth2Login(oauth2 -> oauth2.successHandler(customOAuth2AuthenticationSuccessHandler))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf -> csrf.disable())
                 .build();
     }
 

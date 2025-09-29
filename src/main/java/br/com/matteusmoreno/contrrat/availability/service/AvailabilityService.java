@@ -116,9 +116,6 @@ public class AvailabilityService {
     public void changeAvailabilityStatus(String id, AvailabilityStatus status) {
         Availability availability = getAvailabilityById(id);
 
-        String authenticatedArtistId = authenticationService.getAuthenticatedArtistId();
-        if (!availability.getArtistId().equals(authenticatedArtistId)) throw new AccessDeniedException("User is not authorized to update this availability.");
-
         if (availability.getAvailabilityStatus() == status) throw new RedundantStatusChangeException("Availability is already " + status);
 
         availability.setAvailabilityStatus(status);
